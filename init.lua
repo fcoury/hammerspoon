@@ -4,37 +4,33 @@ Install = spoon.SpoonInstall
 
 log = hs.logger.new('init', 5)
 
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "C", function()
+function resizeAndCenterWinByPerc(perc)
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
 
-  local w = max.w*0.8
-  local h = max.h*0.8
+  local w = max.w*perc/100
+  local h = max.h*perc/100
+
+  f.w = w
+  f.h = h
+
+  win:setFrame(f, 0)
 
   f.x = max.w/2 - w/2
   f.y = max.h/2 - h/2
-  f.w = w
-  f.h = h
-  win:setFrame(f, 0)
-  win:move(f, screen, true, 0)
+
+  nf = screen:localToAbsolute(f)
+  win:move(nf, screen, true, 0)
+end
+
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, "C", function()
+  resizeAndCenterWinByPerc(80)
 end)
 
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, "V", function()
-  local win = hs.window.focusedWindow()
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  local w = max.w*0.6
-  local h = max.h*0.6
-
-  f.x = max.w/2 - w/2
-  f.y = max.h/2 - h/2
-  f.w = w
-  f.h = h
-  win:setFrame(f, 0)
+  resizeAndCenterWinByPerc(60)
 end)
 
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, "N", function()
