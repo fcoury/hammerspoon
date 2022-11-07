@@ -33,9 +33,35 @@ hs.hotkey.bind({"cmd", "alt", "ctrl"}, "V", function()
   resizeAndCenterWinByPerc(60)
 end)
 
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "N", function()
-
+ctrlX = hs.hotkey.bind({"ctrl"}, "X", function()
+  local win = hs.window.focusedWindow()
+  local name = win:application():name()
+  log:d("Current window name", name)
+  if name == "Code" then
+    log:d("Code detected")
+    hs.application.launchOrFocus("iTerm")
+  end
+  if name == "iTerm2" then
+    log:d("iTerm deteced")
+    hs.application.launchOrFocus("Visual Studio Code")
+  end
 end)
+
+checkAndBindCtrlX = function()
+  local monitors = hs.screen.allScreens()
+  -- ignore if less than two monitors
+  if #monitors < 2 then
+    log:d("Single monitor, disabling Ctrl+X override")
+    ctrlX:disable()
+    return
+  else
+    log:d("Multiple monitors, enabling Ctrl+X override")
+    ctrlX:enable()
+  end
+end
+
+watcher = hs.screen.watcher.new(checkAndBindCtrlX):start()
+checkAndBindCtrlX()
 
 hs.hotkey.bind({"cmd", "alt"}, "V", function() hs.eventtap.keyStrokes(hs.pasteboard.getContents()) end)
 
